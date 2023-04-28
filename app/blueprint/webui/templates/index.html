@@ -121,6 +121,8 @@ Index
         </select>
       </div>
 
+
+
       <!-- Nova opção: Utilizar Planilha Existente -->
       <div>
         <label for="usar_planilha">Deseja utilizar uma planilha existente?</label>
@@ -128,16 +130,25 @@ Index
           value="1">
       </div>
 
+
       <div>
         <button class="btn btn-primary" type="submit">Enviar</button>
         <div class="spinner-container hidden">
           <div class="spinner"></div>
         </div>
       </div>
-    </form>
-  </section>
+      <br>
 
-  <script>
+    </section>
+    <footer>
+      <div class="footer-text-container">
+        <div class="footer-text">
+          {{ direcionador_HAP|safe }}
+          <div>
+            <div>
+              <footer>
+
+                <script>
     function loading() {
       document.getElementsByClassName("box-load")[0].style.display = "flex";
     }
@@ -145,7 +156,7 @@ Index
       document.getElementsByClassName("box-load")[0].style.display = "none";
     }
   </script>
-  <style>
+                <style>
   body {
     margin: 0;
     padding: 0;
@@ -159,6 +170,12 @@ Index
     width: 100%;
     box-sizing: border-box;
   }
+
+  .footer-text-container {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 5px;
+}
 
   .topo {
     background-color: rgba(113, 87, 24, 0.527);
@@ -265,4 +282,4 @@ Index
   }
 </style>
 
-  {% endblock %}
+                {% endblock %}

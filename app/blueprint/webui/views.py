@@ -52,19 +52,10 @@ password_padrao = os.getenv("PASSWORD_PADRAO")
 
 
 def index():
-    global operadora_global
     if request.method == "POST":
         operadora = request.form.get("operadora")
-        operadora_global = operadora
         dias = request.form.get("dias")
         usar_planilha = bool(request.form.get("usar_planilha"))
-
-        if usar_planilha:
-            # Código para o caso de utilizar planilha existente
-            pass
-        else:
-            # Código para o caso de não utilizar planilha existente
-            pass
 
         saida = MalaDireta.job(operadora, dias, usar_planilha)
         tabela = pd.read_excel("planilha/responder.xlsx")
@@ -72,10 +63,19 @@ def index():
             classes=["table", "table-striped", "table-bordered", "table-hover"],
             index=False,
         )
-
         return render_template("saida.html", tabela_html=tabela_html)
 
-    return render_template("index.html")
+    lista_arquivos = glob.glob(f"{prefixo_pasta_downloads}/*direcionamento*.xlsx")
+    print("============  lista de arquivos ===========", lista_arquivos)
+    arquivo_recente = max(lista_arquivos, key=os.path.getctime)
+    # Capturar a data de alteração do arquivo mais recente
+    data = datetime.datetime.fromtimestamp(os.path.getmtime(arquivo_recente))
+
+    return render_template(
+        "index.html",
+        arquivo_recente=arquivo_recente,
+        data=data,
+    )
 
 
 def direcionador():
@@ -346,7 +346,7 @@ def agendar():
         beneficiario1 = beneficiario.upper()
         prazo_subsidios = wd.workdays(notificacao, 8)
 
-        if natureza == "ASSINTENCIAL":
+        if natureza == "Assistencial":
             prazo_de_RVE = wd.workdays(notificacao, 5)
             file1 = "grifos/Formularios Parametrizados de Resposta das Operadoras.pdf"
             file2 = "grifos/Quadro de documentos minimos NIP Assistencial.pdf"
