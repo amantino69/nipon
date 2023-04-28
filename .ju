@@ -1,0 +1,11 @@
+PREFIXO_PASTAS_WORD='C:/Users/Juliana Silva/Documents/NIPs'
+PREFIXO_PASTAS_EXCEL='C:/Users/Juliana Silva/Documents/fontes'
+PREFIXO_FONTE='C:/Users/Juliana Silva/documents/Minhas fontes de dados'
+PREFIXO_PASTA_DOWNLOADS='C:/Users/Juliana Silva/Downloads'
+PREFIXO_PASTA_DOCUMENTOS='C:/Users/Juliana Silva/Documents'
+EMAIL_PADRAO = "Juliana.morais@campellogomes.com.br"
+PASSWORD_PADRAO = "aoudtgdhmluovqzp"
+FLASK_APP=app.app:create_app
+FLASK_RUN_PORT=5000
+USER_CPF=069.836.456-26
+USER_PASSWORD=Ans@2022

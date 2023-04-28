@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+Resumo
+{% endblock %}
+
+{% block menu %}
+<li class="mt">
+  <a href="{{ url_for('webui.index') }}">
+    <i class="fa fa-dashboard"></i>
+    <span class="nav-link">Processar</span>
+  </a>
+</li>
+<li>
+  <a href="{{url_for('webui.responder') }}">
+    <i class="fa fa-envelope"></i>
+    <span class="nav-link">Responder </span>
+  </a>
+</li>
+
+<li>
+  <a href="{{url_for('webui.saida') }}">
+    <i class="fa fa-envelope"></i>
+    <span class="nav-link">Resumo </span>
+  </a>
+</li>
+
+<li>
+  <a href="{{url_for('webui.tarefas') }}">
+    <i class="fa fa-envelope"></i>
+    <span class="nav-link">Tarefas </span>
+  </a>
+</li>
+
+<li>
+  <a class="active" href="{{url_for('webui.carga') }}">
+    <i class="fa fa-envelope"></i>
+    <span class="nav-link">Carga </span>
+  </a>
+</li>
+
+<li>
+  <a href="{{url_for('webui.direcionador') }}">
+    <i class="fa fa-envelope"></i>
+    <span class="nav-link">Direcionador </span>
+  </a>
+</li>
+
+
+{% endblock %}
+
+{% block content %}
+
+<script>
+  function saveTable() {
+    var updates = {};
+    $('#table tbody tr').each(function(i, row) {
+      var cells = $(row).find('td');
+      updates[i] = {
+        'Contrato': cells.eq(-3).text(),
+        'Registro': cells.eq(-2).text(),
+        'Modalidade': cells.eq(-1).text(),
+      }
+    });
+    $.ajax({
+      url: "{{url_for('webui.carga')}}",
+      method: 'POST',
+      data: JSON.stringify(updates),
+      contentType: 'application/json',
+      success: function() {
+        alert('Tabela atualizada com sucesso!');
+      }
+    });
+  }
+</script>
+<form action="{{url_for('webui.carga')}}" method="POST">
+  <div class="table-responsive">
+    <table id="table" class="minhaTabela" table-striped table-hover">
+      <thead>
+        <tr class="minhaTabela tr td">
+          {% for column in df.columns %}
+          {% if loop.index <= df.columns|length-3 %}
+          <th class="minhaTabela thead th ">{{ column }}</th>
+          {% else %}
+          <th class="minhaTabela thead th " contenteditable="true">{{ column }}</th>
+          {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in df.iterrows() %}
+        <tr class="minhaTabela tr td">
+          {% for value in row[1].values %}
+          {% if loop.index <= row[1].values|length-3 %}
+          <td class=minhaTabela tr td>{{ value }}</td>
+          {% else %}
+          <td contenteditable="true" class = 'minhaTabela tr td'>{{ value }}</td>
+          {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+  <button type="button" class="btn btn-primary" name="salvar" id="salvar" onclick="saveTable()">Salvar</button>
+  <button type="button" class="btn btn-primary" onclick="window.location.href='/'">Voltar</button>
+
+</form>
+
+<style>
+  body {
+    font-family: sans-serif;
+  }
+
+  #minhaTabela thead th {
+    font-weight: bold;
+    background-color: black;
+    color: white;
+    padding: 5px 10px;
+
+    padding: 5px 10px;
+  }
+
+  #minhaTabela tr td {
+    padding: 5px 10px;
+    text-align: left;
+
+    cursor: pointer;
+    /*importante para não mostrar cursor de texto*/
+  }
+
+  #minhaTabela tr td:last-child {
+    text-align: right;
+  }
+
+  /*Cores*/
+  #minhaTabela tr:nth-child(odd) {
+    background-color: #eee;
+  }
+
+  /*Cor quando passar por cima*/
+  #minhaTabela tr:hover td {
+    background-color: #b8b7db;
+  }
+
+  /*Cor quando selecionado*/
+  #minhaTabela tr.selecionado td {
+    background-color: #1fc71f;
+  }
+
+
+
+
+  footer.fixar-rodape {
+    border-top: 1px solid #333;
+    bottom: 0;
+    left: 20%;
+    height: 40px;
+    position: fixed;
+    width: 100%;
+  }
+
+
+  div.body-content {
+    /** Essa margem vai evitar que o conteudo fique por baixo do rodapé **/
+    margin-bottom: 40px;
+  }
+
+  div.atenção {
+    font-size: 20px;
+    color: #337ab7;
+    background-color: #fff;
+
+
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    width: 100%;
+    bottom: 15px;
+    z-index: 1;
+  }
+
+  .button {
+    background-color: #337ab7;
+    /* Green */
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 4px
+  }
+
+.nav-link {
+font-size: 18px;
+}
+
+</style>
+
+
+{% endblock %}

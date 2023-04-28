@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+Responder
+{% endblock %}
+
+{% block menu %}
+
+<div">
+  <li>
+    <a href="{{ url_for('webui.index') }}">
+      <i class="fa fa-dashboard"></i>
+      <span class="span nav-link">Processar</span>
+    </a>
+  </li>
+  <li>
+    <a class="active" href="{{url_for('webui.responder') }}">
+      <i class="fa fa-envelope"></i> <span class="nav-link">Responder </span>
+    </a>
+  </li>
+
+  <li>
+    <a href="{{url_for('webui.saida') }}">
+      <i class="fa fa-envelope"></i>
+      <span class="nav-link">Resumo </span>
+    </a>
+  </li>
+
+  <li>
+    <a href="{{url_for('webui.tarefas') }}">
+      <i class="fa fa-envelope"></i>
+      <span class="span nav-link">Tarefas </span>
+    </a>
+  </li>
+
+  <li>
+    <a href="{{url_for('webui.carga') }}">
+      <i class="fa fa-envelope"></i>
+      <span class="nav-link">Carga </span>
+    </a>
+  </li>
+  
+  <li>
+    <a href="{{url_for('webui.direcionador') }}">
+      <i class="fa fa-envelope"></i>
+      <span class="nav-link">Direcionador </span>
+    </a>
+  </li>
+
+  </div>
+
+  {% endblock %}
+
+  {% block content %}
+
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/montar_agenda.css') }}">
+  </head>
+
+  <!-- Colocar tabela em um formulário para submit -->
+  <form action="{{ url_for('webui.responder') }}" method="post">
+    <table id='minhaTabela'>
+
+      <thead>
+        <tr>
+          <th>{{colunas[0]}}</th> <!-- Operadora-->
+          <th>{{colunas[1]}}</th> <!-- Data Notificação-->
+          <th>{{colunas[2]}}</th> <!-- Demanda-->
+          <th>{{colunas[3]}}</th> <!-- Protocolo-->
+          <th>{{colunas[4]}}</th> <!-- Beneficiario-->
+          <th>{{colunas[5]}}</th> <!-- CPF-->
+          <th>{{colunas[6]}}</th> <!-- Descrição-->
+          <th>{{colunas[7]}}</th> <!-- Prazo-->
+          <th>{{colunas[10]}}</th> <!-- Contrato-->
+          <th>{{colunas[11]}}</th> <!-- Registro-->
+          <th>{{colunas[12]}}</th> <!-- Modalidade-->
+        <tr>
+      </thead>
+      <tbody>
+
+        <!-- for até quantidade -->
+        {% for x in range(quantidade) %}
+
+        <tr>
+          <td>{{tuples[0][x]}}</td>
+          <td>{{tuples[1][x]}}</td>
+          <td>{{tuples[2][x]}}</td>
+          <td>{{tuples[3][x]}}</td>
+          <td>{{tuples[4][x]}}</td>
+          <td>{{tuples[5][x]}}</td>
+          <td>{{tuples[6][x]}}</td>
+          <td>{{tuples[7][x]}}</td>
+          <td>{{tuples[10][x]}}</td>
+          <td>{{tuples[11][x]}}</td>
+          <td>{{tuples[12][x]}}</td>
+          <!-- Adicionar campo de entrada -->
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+
+    <input type="text" name="demanda" id="demanda" value="" hidden>
+    <input type="text" name="operadora" id="operadora" value="" hidden>
+    <input type="text" name="hoje" id="hoje" value="" hidden>
+    <input type="text" name="beneficiario" id="beneficiario" value="" hidden>
+
+
+    <button class="button" id="visualizarDados">Abrir o Word.</button>
+    <br>
+    <br>
+    <div class="atenção">
+
+      <h6> Atenção!! Feche todos documento do word dessa lista antes de abrir o próximo</h6>
+    </div>
+
+
+
+    <script>
+      var tabela = document.getElementById("minhaTabela");
+      var linhas = tabela.getElementsByTagName("tr");
+
+      for (var i = 0; i < linhas.length; i++) {
+        var linha = linhas[i];
+        linha.addEventListener("click", function () {
+          //Adicionar ao atual
+          selLinha(this, false); //Selecione apenas um
+          //selLinha(this, true); //Selecione quantos quiser
+        });
+      }
+
+      /**
+      Caso passe true, você pode selecionar multiplas linhas.
+      Caso passe false, você só pode selecionar uma linha por vez.
+      **/
+      function selLinha(linha, multiplos) {
+        if (!multiplos) {
+          var linhas = linha.parentElement.getElementsByTagName("tr");
+          for (var i = 0; i < linhas.length; i++) {
+            var linha_ = linhas[i];
+            linha_.classList.remove("selecionado");
+          }
+        }
+        linha.classList.toggle("selecionado");
+      }
+
+      /**
+      Exemplo de como capturar os dados
+      **/
+      var btnVisualizar = document.getElementById("visualizarDados");
+
+      btnVisualizar.addEventListener("click", function () {
+        var selecionados = tabela.getElementsByClassName("selecionado");
+        //Verificar se eestá selecionado
+        if (selecionados.length < 1) {
+          alert("Selecione pelo uma linha");
+
+
+          return;
+          return false;
+        }
+
+        var dados = "";
+
+        for (var i = 0; i < selecionados.length; i++) {
+          var selecionado = selecionados[i];
+          selecionado = selecionado.getElementsByTagName("td");
+          dados += "Operadora: " + selecionado[1].innerHTML + " - Hoje: " + selecionado[0].innerHTML + " - Beneficiário: " + selecionado[2].innerHTML + " - Demanda: " + selecionado[2].innerHTML + "\n";
+          
+          beneficiario = selecionado[4].innerHTML;
+          hoje = selecionado[0].innerHTML;
+          operadora = selecionado[1].innerHTML;
+          demanda = selecionado[2].innerHTML;
+
+        }
+
+        document.getElementById("hoje").value = hoje;
+        document.getElementById("operadora").value = operadora;
+        document.getElementById("beneficiario").value = beneficiario;
+        document.getElementById("demanda").value = demanda;
+
+      });
+
+    </script>
+
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+
+      #minhaTabela thead th {
+        font-weight: bold;
+        background-color: #337ab7;
+        /* Atualizar cor de fundo aqui */
+        color: white;
+        font-size: 12px;
+        padding: 10px 10px;
+        /* Aumentar o padding (vertical) aqui */
+      }
+
+
+      #minhaTabela tr td {
+        padding: 5px 10px;
+        text-align: left;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+
+      cursor: pointer;
+      /*importante para não mostrar cursor de texto*/
+      }
+
+      #minhaTabela tr td:last-child {
+        text-align: right;
+      }
+
+      /*Cores*/
+      #minhaTabela tr:nth-child(odd) {
+        background-color: #eee;
+      }
+
+      /*Cor quando passar por cima*/
+      #minhaTabela tr:hover td {
+        background-color: #b8b7db;
+      }
+
+      /*Cor quando selecionado*/
+      #minhaTabela tr.selecionado td {
+        background-color: #1fc71f;
+      }
+
+
+
+
+      footer.fixar-rodape {
+        border-top: 1px solid #333;
+        bottom: 0;
+        left: 20%;
+        height: 40px;
+        position: fixed;
+        width: 100%;
+      }
+
+
+      div.body-content {
+        /** Essa margem vai evitar que o conteudo fique por baixo do rodapé **/
+        margin-bottom: 40px;
+      }
+
+      div.atenção {
+        font-size: 20px;
+        color: #337ab7;
+        background-color: #fff;
+
+
+        padding: 5px;
+        text-align: center;
+        font-weight: bold;
+        position: fixed;
+        width: 100%;
+        bottom: 15px;
+        z-index: 1;
+      }
+
+      .button {
+        background-color: #337ab7;
+        /* Green */
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 4px
+      }
+
+      .nav-link {
+        font-size: 18px;
+      }
+
+      div.atenção {
+        font-size: 30px;
+        color: #8d0d38;
+        background-color: #fff;
+        padding: 5px;
+        text-align: center;
+        font-weight: bold;
+        position: fixed;
+        width: 100%;
+        bottom: 15px;
+        z-index: 1;
+        animation: piscar 2s infinite;
+      }
+
+      @keyframes piscar {
+        0% {
+          opacity: 1;
+        }
+
+        50% {
+          opacity: 0;
+        }
+
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+
+
+    {% endblock %}

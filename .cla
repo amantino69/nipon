@@ -1,0 +1,11 @@
+PREFIXO_PASTAS_WORD='C:/Users/amantino/Documents/NIPs'
+PREFIXO_PASTAS_EXCEL='C:/Users/amantino/Documents/fontes'
+PREFIXO_FONTE='C:/Users/amantino/Documents/Minhas fontes de dados'
+PREFIXO_PASTA_DOWNLOADS='C:/Users/amantino/Downloads'
+PREFIXO_PASTA_DOCUMENTOS='C:/Users/amantino/Documents'
+EMAIL_PADRAO = "claudio.vieiraamantino@gmail.com"
+PASSWORD_PADRAO = "twkohftfokwoaawx"
+FLASK_APP=app.app:create_app
+FLASK_RUN_PORT=5000
+USER_CPF=069.836.456-26
+USER_PASSWORD=Ans@2022

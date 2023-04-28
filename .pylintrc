@@ -1,0 +1,7 @@
+load-plugins=pylint_flask
+[pycodestyle]
+max-line-length = 120
+[pylint]
+# Salva as correções automaticamente ao salvar o arquivo.
+# 1 para ativar a correção, 0 para desativar.
+auto-fix = 1
