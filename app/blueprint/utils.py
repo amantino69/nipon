@@ -33,12 +33,6 @@ def find_gender(nome):
 
 
 def texto(operadora, hoje, first_name, demanda, situacao):
-    print("=========================================", f"Operadora: {operadora}")
-    print("=========================================", f"Hoje: {hoje}")
-    print("=========================================", f"Nome: {first_name}")
-    print("=========================================", f"Demanda: {demanda}")
-    print("=========================================", f"Situação: {situacao}")
-
     hoje = datetime.datetime.now().strftime("%d/%m/%Y")
     # Substituir "/" por "-" na variável hoje
     hoje = hoje.replace("/", "-")
@@ -54,8 +48,6 @@ def texto(operadora, hoje, first_name, demanda, situacao):
         f"{prefixo_pastas_excel}/{hoje}/{operadora}/{name}/{demanda}/{name}.xlsx"
     )
     destino_excel = f"{prefixo_fonte}/fonte.xlsx"
-    print("=========================================", f"Origem: {origem_excel}")
-    print("=========================================", f"Destino: {destino_excel}")
 
     try:
         shutil.copyfile(origem_excel, destino_excel)

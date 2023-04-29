@@ -340,49 +340,45 @@ def agendar():
         # somar prazo em uteis a data de hoje
         # d1 = date.today()
         prazo_final = wd.workdays(notificacao, 10)
-        prazo_subsidio = wd.workdays(notificacao, 8)
-        # Converter data em str 'YYYY-mm-dd'
         prazo_final = prazo_final.strftime("%Y-%m-%d")
-        beneficiario1 = beneficiario.upper()
-        prazo_subsidios = wd.workdays(notificacao, 8)
+        prazo_subsidio = wd.workdays(notificacao, 8)
+        prazo_subsidio = prazo_subsidio.strftime("%d-%m-%Y")
 
         if natureza == "Assistencial":
             prazo_de_RVE = wd.workdays(notificacao, 5)
+            prazo_de_RVE = prazo_de_RVE.strftime("%d/%m/%Y")
             file1 = "grifos/Formularios Parametrizados de Resposta das Operadoras.pdf"
             file2 = "grifos/Quadro de documentos minimos NIP Assistencial.pdf"
             e_mail_operadora = "grifos/email-operadora - Assistencial.docx"
-
+            print("=====  A S S I S T E N C I A L ")
         else:
             prazo_de_RVE = wd.workdays(notificacao, 10)
+            prazo_de_RVE = prazo_de_RVE.strftime("%d/%m/%Y")
+
             file1 = "grifos/Formularios Parametrizados de Resposta das Operadoras.pdf"
             file2 = "grifos/Quadro de documentos minimos NIP Nao Assistencial.pdf"
             e_mail_operadora = "grifos/email-operadora - Não Assistencial.docx"
-
+            print("===== N  ã  O   A S S I S T E N C I A L ")
         dia = notificacao
         dia = dia.strftime("%d/%m/%Y")
 
         summary = f"NIP {operadora} - {beneficiario} - DEMANDA Nº {demanda} - [{dia}]"
 
         if todas_demandas["agendada"][i] == "NO":
+            print("===== Agendada = NO ")
             event = {
                 "summary": summary,
                 "location": "Gomes e Campello",
                 "description": f"{natureza} - {summary}",
                 "start": {
-                    "date": prazo_final,
+                    "date": prazo_final,  # Certifique-se de que 'prazo_final' esteja no formato ISO 8601 (YYYY-MM-DD)
                     "timeZone": "America/Los_Angeles",
                 },
                 "end": {
-                    "date": prazo_final,
+                    "date": prazo_final,  # Certifique-se de que 'prazo_final' esteja no formato ISO 8601 (YYYY-MM-DD)
                     "timeZone": "America/Los_Angeles",
                 },
-                "attendees": [
-                    # {"email": "Juliana.morais@campellogomes.com.br"},
-                    # {'email': 'gabriela.faustino@campellogomes.com.br'},
-                    # {'email': 'felipe.gomes@campellogomes.com.br'},
-                    # {'email': 'marcio.campello@campellogomes.com.br'},
-                    {"email": f"{email_padrao}"},
-                ],
+                "attendees": [{"email": f"{email_padrao}"}],
                 "guestsCanSeeOtherGuests": True,
                 "transparency": "transparent",
                 "guestsCanModify": "true",
@@ -409,10 +405,18 @@ def agendar():
             # Enviar e-mail
             with open(f"{e_mail_operadora}", "rb") as file:
                 body = read_docx(file)
-                body = (
-                    f"Prezados, Segue nova demanda {natureza} recepcionada no Espaço NIP em {dia}, instaurada por {beneficiario} ({CPF}) com o seguinte teor: Reclamação: {descricao}  Prazo de resolução e contato para fins de RVE (art. 10, I e II, da RN nº 483/22): {prazo_de_RVE} Prazo para envio dos subsídios: {prazo_subsidios}"
-                    + body
-                )
+
+            html_body = f"""
+            <html>
+            <head></head>
+            <body>
+            <p>Prezados, Segue nova demanda {natureza} recepcionada no Espaço NIP em {dia}, instaurada por {beneficiario} ({CPF}) com o seguinte teor:</p>
+            <p><b><u>Reclamação:</u></b> {descricao}</p>
+            <p>Prazo de resolução e contato para fins de RVE (art. 10, I e II, da RN nº 483/22): {prazo_de_RVE}</p>
+            <p>Prazo para envio dos subsídios: {prazo_subsidio}</p>\n</body>
+            </html>
+            """
+
             smtp_server = "smtp.gmail.com"
             port = 587
             sender_email = f"{email_padrao}"
@@ -427,10 +431,9 @@ def agendar():
             msg["Subject"] = subject
 
             # Adicionando o corpo do email
-            msg.attach(MIMEText(body, "plain"))
+            msg.attach(MIMEText(html_body, "html"))
 
             # Adicionando todos os anexos
-
             with open(file1, "rb") as attachment:
                 part = MIMEBase("application", "octet-stream")
                 part.set_payload(attachment.read())
@@ -443,6 +446,7 @@ def agendar():
                 part.set_payload(attachment.read())
                 encoders.encode_base64(part)
                 part.add_header("Content-Disposition", f"attachment; filename={file2}")
+
                 msg.attach(part)
 
             # Enviando o email

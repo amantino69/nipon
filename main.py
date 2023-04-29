@@ -2,8 +2,12 @@ from flask import Flask, request
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+app.env = "development"
 
 # Define as credenciais e autoriza a API do Google Calendar
 SCOPES = "https://www.googleapis.com/auth/calendar"
@@ -46,5 +50,5 @@ def main():
 
 
 if __name__ == "__main__":
-    app.config["ENV"] = "development"
+    app.env = "development"
     app.run(debug=True, port=5000)

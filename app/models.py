@@ -116,12 +116,23 @@ class MalaDireta:
             driver.switch_to.frame("frameConteudoDialog")
 
             # Aguardar o formContent:j_idt85:j_idt220  e clicar
-            wait.until(
-                EC.element_to_be_clickable((By.ID, "formContent:j_idt85:j_idt119"))
-            ).click()
+            time.sleep(10)
+
+            try:
+                wait.until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH, "//*[@id='formContent:j_idt102:j_idt140']")
+                    )
+                ).click()
+            except:
+                wait.until(
+                    EC.element_to_be_clickable(
+                        (By.ID, "formContent:j_idt85:linkDownloadExcelAguardando")
+                    )
+                ).click()
 
             # Aguardar a conclusão do download do arquivo
-            time.sleep(30)
+            time.sleep(10)
             # -----------------aqui --------------------
             # buscar  mais recente e data de alteração do arquivo do direcionador da Hapvida
             lista_arquivos = glob.glob(
